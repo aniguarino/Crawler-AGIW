@@ -1,3 +1,4 @@
+package crawler;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -10,7 +11,7 @@ import java.util.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class BingSearch {
+public class Crawler {
     public static void main(final String[] args) throws Exception {
 		final String accountKey = "qblXAUVW0S6ewlnMwwUwKW8euw/SL2+Cs8jF7SLqmjI";
 		final String bingUrlPattern = "https://api.datamarket.azure.com/Bing/Search/Web?Query=%%27%s%%27&$format=JSON";
