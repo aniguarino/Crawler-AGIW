@@ -11,10 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class BingSearch {
-	
     public static void main(final String[] args) throws Exception {
-    	
-		final String accountKey = "Inserite la vostra key qui";
+		final String accountKey = "qblXAUVW0S6ewlnMwwUwKW8euw/SL2+Cs8jF7SLqmjI";
 		final String bingUrlPattern = "https://api.datamarket.azure.com/Bing/Search/Web?Query=%%27%s%%27&$format=JSON";
 		
 		ArrayList<String> queries = InputTXT.LeggiRighe();
@@ -22,7 +20,6 @@ public class BingSearch {
 		String query_attuale = "";
 			
 		while(!queries.isEmpty()){ // Effettuo una query per ogni riga del file di testo
-			
 			query_attuale = "'" + queries.get(0).toString() + "'"; 
 
 			final String query = URLEncoder.encode(query_attuale, Charset.defaultCharset().name());
@@ -49,10 +46,7 @@ public class BingSearch {
 					System.out.println(aResult.get("Url"));
 				}
 			}
-			
 			queries.remove(0);
 		}
-        
     }
-
 }

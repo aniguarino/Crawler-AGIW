@@ -1,31 +1,21 @@
-
 import java.io.*;
 import java.util.ArrayList;
 
 public class InputTXT {
-	
     public static ArrayList<String> LeggiRighe() {
-
     	 // Nome del file da leggere
         String fileName = "persone.txt";
 
         String line = null;
-        
-        ArrayList<String> righe = new ArrayList<String>();
+        ArrayList<String> row = new ArrayList<String>();
         
         try {
-            
-            FileReader fileReader = 
-                new FileReader(fileName);
-
-            
-            BufferedReader bufferedReader = 
-                new BufferedReader(fileReader);
+            FileReader fileReader = new FileReader(fileName);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
 
             while((line = bufferedReader.readLine()) != null) {
-            	righe.add(line.toString());
-            }   
-            
+            	row.add(line.toString());
+            }
             bufferedReader.close();         
         }
         catch(FileNotFoundException ex) {
@@ -38,7 +28,6 @@ public class InputTXT {
                 "Errore lettura File: '" 
                 + fileName + "'");                  
         }
-        
-        return righe;
+        return row;
     }
 }
