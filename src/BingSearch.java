@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 public class BingSearch {
     public static void main(final String[] args) throws Exception {
-		final String accountKey = "qblXAUVW0S6ewlnMwwUwKW8euw/SL2+Cs8jF7SLqmjI";
+		final String accountKey = "Inserire key account";
 		final String bingUrlPattern = "https://api.datamarket.azure.com/Bing/Search/Web?Query=%%27%s%%27&$format=JSON";
 		
 		ArrayList<String> queries = InputTXT.LeggiRighe();
