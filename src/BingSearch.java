@@ -14,7 +14,7 @@ public class BingSearch {
 	
     public static void main(final String[] args) throws Exception {
     	
-		final String accountKey = "Inserite la vostra key";
+		final String accountKey = "Inserite la vostra key qui";
 		final String bingUrlPattern = "https://api.datamarket.azure.com/Bing/Search/Web?Query=%%27%s%%27&$format=JSON";
 		
 		ArrayList<String> queries = InputTXT.LeggiRighe();
