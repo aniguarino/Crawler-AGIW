@@ -1,4 +1,6 @@
 package crawler;
+
+import crawler.io.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -16,14 +18,16 @@ public class Crawler {
 		final String accountKey = "Inserire key account";
 		final String bingUrlPattern = "https://api.datamarket.azure.com/Bing/Search/Web?Query=%%27%s%%27&$format=JSON";
 		
-		ArrayList<String> queries = InputTXT.LeggiRighe();
+		FileManager fileManager = new FileManager();
 		
-		String query_attuale = "";
+		ArrayList<String> queries = fileManager.readNameFromPath("persone.txt");
+		
+		String query_current = "";
 			
 		while(!queries.isEmpty()){ // Effettuo una query per ogni riga del file di testo
-			query_attuale = "'" + queries.get(0).toString() + "'"; 
+			query_current = "'" + queries.get(0).toString() + "'"; 
 
-			final String query = URLEncoder.encode(query_attuale, Charset.defaultCharset().name());
+			final String query = URLEncoder.encode(query_current, Charset.defaultCharset().name());
 			final String bingUrl = String.format(bingUrlPattern, query);
 
 			final String accountKeyEnc = Base64.getEncoder().encodeToString((accountKey + ":" + accountKey).getBytes());
