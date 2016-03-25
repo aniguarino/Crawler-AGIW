@@ -4,10 +4,10 @@ import com.mongodb.MongoClient;
 
 public class MongoConnection {
 	private static MongoConnection instance;
-	private MongoClient mongoClient;
+	private static MongoClient mongoClient;
 
-	private MongoConnection() {
-		this.mongoClient = new MongoClient ("localhost", 27017 );
+	public MongoConnection() {
+		mongoClient = new MongoClient ("localhost", 27017 );
 	}
 
 	public static MongoConnection getInstance()	{
@@ -17,12 +17,12 @@ public class MongoConnection {
 		return instance; 
 	}
 	
-	public MongoClient getMongoClient() {
-		return this.mongoClient;
+	public static MongoClient getMongoClient() {
+		return mongoClient;
 	}
 	
-	public void close() {
+	public static void close() {
 		instance = null;
-		this.mongoClient.close();
+		mongoClient.close();
 	}
 }
