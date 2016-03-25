@@ -1,0 +1,17 @@
+<<<<<<< HEAD
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="/home/simone/workspace/Progetto-AGIW/lib/json.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="C:/Users/Aniello/Desktop/java-json.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
+>>>>>>> 3d015f26a5c0cd43fed07e41c6fb9d73db28d7fe
