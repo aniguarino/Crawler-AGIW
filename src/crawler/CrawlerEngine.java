@@ -22,16 +22,16 @@ import crawler.model.MongoMethods;
 
 public class CrawlerEngine {
 
-	private ArrayList<String> accountKey = null;
-	private String bingUrlPattern = "https://api.datamarket.azure.com/Bing/Search/Web?Query=%%27%s%%27&$skip=%d&$format=JSON";
+	private String accountKey;
+	private String bingUrlPattern = "https://api.datamarket.azure.com/Bing/Search/Web?Query=%s&$skip=%d&$format=JSON";
 	private FileManager fileManager = new FileManager();
 	private ArrayList<String> names = null;
 	private MongoMethods mongo = new MongoMethods();
 
-	public final int skipMax = 300;
-	public final int queryMaxForAccount = 4900;
+	public final int skipMax = 100;
+	//public final int queryMaxForAccount = 4900;
 
-	public CrawlerEngine(ArrayList<String> accountKey, String inputPath){
+	public CrawlerEngine(String accountKey, String inputPath){
 		this.accountKey = accountKey;
 		this.names = fileManager.readNameFromPath(inputPath);
 	}
@@ -71,13 +71,14 @@ public class CrawlerEngine {
 					JSONArray results = d.getJSONArray("results");
 					int resultsLength = results.length();
 					
+					// TAKE ALL THE DOCUMENT FROM THE RESPONSE
 					for (int i = 0; i < resultsLength; i++) {
 						JSONObject aResult = results.getJSONObject(i);
 						
 						String url = (String)aResult.get("Url");
 						String title = (String)aResult.get("Title");
 						String description = (String)aResult.get("Description");
-						String content = ""; // TO IMPLEMENT THE CRAWLING
+						String content = "No content"; // TO IMPLEMENT THE CRAWLING
 						
 						Doc doc = new Doc(name, url, title, description, content);
 						docsOfKeyword.add(doc);
@@ -85,9 +86,13 @@ public class CrawlerEngine {
 					skip += 50;
 				}
 				// PERSIST ALL THE DOC
+				int countErrorPersist = 0;
 				for(Doc doc : docsOfKeyword){
-					mongo.persistDoc(doc);
+					if(!mongo.persistDoc(doc))
+						countErrorPersist++;
 				}
+				
+				System.out.println("Persistiti "+(docsOfKeyword.size()-countErrorPersist)+" documenti su "+docsOfKeyword.size()+" documenti totali sulla keyword: "+name);
 			}
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
