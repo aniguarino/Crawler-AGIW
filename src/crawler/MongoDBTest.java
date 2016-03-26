@@ -1,11 +1,6 @@
 package crawler;
 
-import org.bson.Document;
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import crawler.model.Doc;
-import crawler.model.MongoConnection;
 import crawler.model.MongoMethods;
 
 public class MongoDBTest {
@@ -13,10 +8,6 @@ public class MongoDBTest {
 	public static void main(String[] args) {
 
 		Doc doc = new Doc("QuerydelDOC","www.test2.it","TitoloDoc","DescrizioneDoc","c:user..");
-		MongoConnection connection = new MongoConnection();
-		MongoClient mongoClient = MongoConnection.getMongoClient();
-		MongoDatabase database = mongoClient.getDatabase("mydb");
-		MongoCollection<Document> collection = database.getCollection("documenti");
 		MongoMethods mongoMethods = new MongoMethods();
 
 		/*
@@ -27,7 +18,7 @@ public class MongoDBTest {
 		} */
 		
 		
-		boolean persist = mongoMethods.PersistDoc(doc, collection);
+		boolean persist = mongoMethods.persistDoc(doc);
 		if (persist){
 			System.out.println("Documento persistito!\n");
 		}else{
@@ -35,7 +26,7 @@ public class MongoDBTest {
 		}
 		
 		
-		Long count = mongoMethods.countDocs(collection);
+		Long count = mongoMethods.countDocs();
 		System.out.println("Documenti presenti nel DB: "+count);
 		
 		

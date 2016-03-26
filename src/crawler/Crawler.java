@@ -1,6 +1,8 @@
 package crawler;
 
 import crawler.io.*;
+import crawler.model.Doc;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -15,7 +17,8 @@ import org.json.JSONObject;
 
 public class Crawler {
     public static void main(final String[] args) throws Exception {
-		final String accountKey = "Inserire key account";
+		
+    	final String accountKey = "qblXAUVW0S6ewlnMwwUwKW8euw/SL2+Cs8jF7SLqmjI";
 		final String bingUrlPattern = "https://api.datamarket.azure.com/Bing/Search/Web?Query=%%27%s%%27&$format=JSON";
 		
 		FileManager fileManager = new FileManager();
@@ -48,10 +51,13 @@ public class Crawler {
 				final int resultsLength = results.length();
 				for (int i = 0; i < resultsLength; i++) {
 					final JSONObject aResult = results.getJSONObject(i);
-					System.out.println(aResult.get("Url"));
+					Doc doc = new Doc(query_current, (String)aResult.get("Url"), (String)aResult.get("Title"), (String)aResult.get("Description"), "");
+					System.out.println(doc.toString());
 				}
 			}
 			queries.remove(0);
 		}
+		
+		
     }
 }
