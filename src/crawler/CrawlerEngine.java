@@ -14,6 +14,7 @@ import java.util.Base64;
 import java.util.HashSet;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import crawler.io.FileManager;
@@ -28,7 +29,7 @@ public class CrawlerEngine {
 	private ArrayList<String> names = null;
 	private MongoMethods mongo = new MongoMethods();
 
-	public final int skipMax = 100;
+	public final int skipMax = 0;
 	//public final int queryMaxForAccount = 4900;
 
 	public CrawlerEngine(String accountKey, String inputPath){
@@ -36,15 +37,16 @@ public class CrawlerEngine {
 		this.names = fileManager.readNameFromPath(inputPath);
 	}
 
-	public void run(){
+	public void run() throws JSONException{
 		String query_current = "";
 		int skip = 0;
-
+		
 		try {
 			// ITERATE FOR ALL THE NAMES IN INPUT
 			for(String name : names){
 				// EVITATE THE DOC DUPLICATE WITH THE HASHSET
 				HashSet<Doc> docsOfKeyword = new HashSet<Doc>();
+				skip = 0; //RESET SKIP
 				
 				while(skip <= skipMax){
 					// CREATE THE QUERY
@@ -81,19 +83,27 @@ public class CrawlerEngine {
 						String content = "No content"; // TO IMPLEMENT THE CRAWLING
 						
 						Doc doc = new Doc(name, url, title, description, content);
+						//System.out.println(doc.toString());
 						docsOfKeyword.add(doc);
 					}
+					
+					//PARTIAL PERSIST
+					for(Doc doc : docsOfKeyword)
+						mongo.persistDoc(doc);
+					
+					docsOfKeyword.clear();
 					skip += 50;
 				}
-				// PERSIST ALL THE DOC
+				
+				// CHECK DB
 				int countErrorPersist = 0;
 				for(Doc doc : docsOfKeyword){
 					if(!mongo.persistDoc(doc))
 						countErrorPersist++;
 				}
-				
 				System.out.println("Persistiti "+(docsOfKeyword.size()-countErrorPersist)+" documenti su "+docsOfKeyword.size()+" documenti totali sulla keyword: "+name);
 			}
+			System.out.println("Ho salvato tutto");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,7 +114,10 @@ public class CrawlerEngine {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}				
 }
+
+
+
 
 
