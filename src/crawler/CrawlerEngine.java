@@ -29,7 +29,7 @@ public class CrawlerEngine {
 	private ArrayList<String> names = null;
 	private MongoMethods mongo = new MongoMethods();
 
-	public final int skipMax = 0;
+	public final int skipMax = 50;
 	//public final int queryMaxForAccount = 4900;
 
 	public CrawlerEngine(String accountKey, String inputPath){
@@ -86,16 +86,10 @@ public class CrawlerEngine {
 						//System.out.println(doc.toString());
 						docsOfKeyword.add(doc);
 					}
-					
-					//PARTIAL PERSIST
-					for(Doc doc : docsOfKeyword)
-						mongo.persistDoc(doc);
-					
-					docsOfKeyword.clear();
 					skip += 50;
 				}
-				
-				// CHECK DB
+
+				// PERSIST ALL DOCUMENTS
 				int countErrorPersist = 0;
 				for(Doc doc : docsOfKeyword){
 					if(!mongo.persistDoc(doc))
@@ -103,7 +97,6 @@ public class CrawlerEngine {
 				}
 				System.out.println("Persistiti "+(docsOfKeyword.size()-countErrorPersist)+" documenti su "+docsOfKeyword.size()+" documenti totali sulla keyword: "+name);
 			}
-			System.out.println("Ho salvato tutto");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

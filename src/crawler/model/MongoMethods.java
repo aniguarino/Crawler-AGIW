@@ -29,6 +29,7 @@ public class MongoMethods {
 					.append("Descrizione", document.getDescription().toString())
 					.append("Content", document.getContent().toString());
 			collection.insertOne(doc);
+			System.out.println("Inserito");
 			return true;
 		}
 		catch (Exception exc) {
