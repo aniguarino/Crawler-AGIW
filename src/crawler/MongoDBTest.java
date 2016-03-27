@@ -8,8 +8,8 @@ public class MongoDBTest {
 
 	public static void main(String[] args) {
 
-		Doc doc = new Doc("QuerydelDOC","www.test.it","TitoloDoc","DescrizioneDoc","c:user..");
-		Img img = new Img("Querydell'IMG","www.immagine.it","TitoloImg","DescrizioneImg");
+		Doc doc = new Doc("QuerydelDOC","www.test.it","TitoloDoc","DescrizioneDoc","HTML", "parole contenute");
+		Img img = new Img("Querydell'IMG","www.linkimmagine.it","www.linksorgente.it","Titolosorgente","ContentSorgente");
 		MongoMethods mongoMethods = new MongoMethods();
 
 		/*
@@ -38,8 +38,6 @@ public class MongoDBTest {
 		}
 		
 		System.out.println("Immagini presenti nel DB: " + mongoMethods.countImgs());
-		
-		
 		
 		
 		//System.out.println(mongoMethods.getDocbyUrl("www.test.it", collection).getUrl().toString());

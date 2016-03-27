@@ -2,58 +2,69 @@ package crawler.model;
 
 public class Img {
 	private String keyword;
-	private String url;
-	private String title;
-	private String description;
+	private String urlImg;
+	private String urlSource;
+	private String titleSource;
+	private String contentSource;
 	
-	public Img(String keyword, String url, String title, String description) {
+	public Img(String keyword, String urlImg, String urlSource, String titleSource, String contentSource) {
 		this.keyword = keyword;
-		this.url = url;
-		this.title = title;
-		this.description = description;
+		this.urlImg = urlImg;
+		this.urlSource = urlSource;
+		this.titleSource = titleSource;
+		this.contentSource = contentSource;
 	}
-	
+		
 	public String getKeyword() {
 		return keyword;
 	}
-	
+
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
 	}
-	
-	public String getUrl() {
-		return url;
+
+	public String getUrlImg() {
+		return urlImg;
 	}
-	
-	public void setUrl(String url) {
-		this.url = url;
+
+	public void setUrlImg(String urlImg) {
+		this.urlImg = urlImg;
 	}
-	
-	public String getTitle() {
-		return title;
+
+	public String getUrlSource() {
+		return urlSource;
 	}
-	
-	public void setTitle(String title) {
-		this.title = title;
+
+	public void setUrlSource(String urlSource) {
+		this.urlSource = urlSource;
 	}
-	
-	public String getDescription() {
-		return description;
+
+	public String getTitleSource() {
+		return titleSource;
 	}
-	
-	public void setDescription(String description) {
-		this.description = description;
+
+	public void setTitleSource(String titleSource) {
+		this.titleSource = titleSource;
 	}
-		
+
+	public String getContentSource() {
+		return contentSource;
+	}
+
+	public void setContentSource(String contentSource) {
+		this.contentSource = contentSource;
+	}
+
 	public boolean equals(Img doc){
-		if(keyword.equals(doc.getKeyword()) && url.equals(doc.getUrl()) && title.equals(doc.getTitle()))
+		if(keyword.equals(doc.getKeyword()) && urlImg.equals(doc.getUrlImg()) && urlSource.equals(doc.getUrlSource()) &&
+				titleSource.equals(doc.getTitleSource()) && contentSource.equals(doc.getContentSource()))
 			return true;
 		return false;
 	}
 
 	@Override
 	public String toString() {
-		return "Doc [keyword=" + keyword + ", url=" + url + ", title=" + title + ", description=" + description
-				+ "]";
+		return "Doc [keyword=" + keyword + ", urlImg=" + urlImg + ", urlSource=" + urlSource + ", titleSource=" + titleSource
+				+ ", contentSource=" + contentSource + "]";
 	}
 }

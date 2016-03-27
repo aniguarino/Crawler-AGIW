@@ -18,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import crawler.io.FileManager;
+import crawler.model.ContentsDoc;
 import crawler.model.Doc;
 import crawler.model.MongoMethods;
 
@@ -28,6 +29,7 @@ public class CrawlerEngine {
 	private FileManager fileManager = new FileManager();
 	private ArrayList<String> names = null;
 	private MongoMethods mongo = new MongoMethods();
+	private ContentsDoc contentsdoc = new ContentsDoc();
 
 	public final int skipMax = 50;
 	//public final int queryMaxForAccount = 4900;
@@ -40,7 +42,7 @@ public class CrawlerEngine {
 	public void run() throws JSONException{
 		String query_current = "";
 		int skip = 0;
-		
+	
 		try {
 			// ITERATE FOR ALL THE NAMES IN INPUT
 			for(String name : names){
@@ -80,13 +82,18 @@ public class CrawlerEngine {
 						String url = (String)aResult.get("Url");
 						String title = (String)aResult.get("Title");
 						String description = (String)aResult.get("Description");
-						String content = "No content"; // TO IMPLEMENT THE CRAWLING
 						
-						Doc doc = new Doc(name, url, title, description, content);
-						//System.out.println(doc.toString());
-						docsOfKeyword.add(doc);
+						//SEARCH CONTENT HTML AND INDEX CONTENT FOR EACH DOCUMENT
+						String contentHTML = contentsdoc.searchHTML(url);
+						String contentIndex = contentsdoc.searchIndex(url);
+						if(contentHTML != "" && contentIndex != ""){
+							//Gestisco solo documenti con HTML e contentIndex presenti
+							Doc doc = new Doc(name, url, title, description, contentHTML, contentIndex);
+							docsOfKeyword.add(doc);
+						}
 					}
 					skip += 50;
+					System.out.println("In esecuzione...");
 				}
 
 				// PERSIST ALL DOCUMENTS
