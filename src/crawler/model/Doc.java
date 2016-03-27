@@ -5,14 +5,16 @@ public class Doc {
 	private String url;
 	private String title;
 	private String description;
-	private String content;
+	private String contentHTML;
+	private String contentIndex;
 	
-	public Doc(String keyword, String url, String title, String description, String content) {
+	public Doc(String keyword, String url, String title, String description, String contentHTML, String contentIndex) {
 		this.keyword = keyword;
 		this.url = url;
 		this.title = title;
 		this.description = description;
-		this.content = content;
+		this.contentHTML = contentHTML;
+		this.contentIndex = contentIndex;
 	}
 	
 	public String getKeyword() {
@@ -47,12 +49,20 @@ public class Doc {
 		this.description = description;
 	}
 		
-	public String getContent() {
-		return content;
+	public String getContentHTML() {
+		return contentHTML;
+	}
+	
+	public String getContentIndex() {
+		return contentIndex;
 	}
 
-	public void setContent(String content) {
-		this.content = content;
+	public void setContentHTML(String contentHTML) {
+		this.contentHTML = contentHTML;
+	}
+	
+	public void setContentIndex(String contentIndex) {
+		this.contentIndex = contentIndex;
 	}
 
 	public boolean equals(Doc doc){
@@ -64,6 +74,6 @@ public class Doc {
 	@Override
 	public String toString() {
 		return "Doc [keyword=" + keyword + ", url=" + url + ", title=" + title + ", description=" + description
-				+ ", content=" + content + "]";
+				+ ", contentIndex=" + contentIndex + "]";
 	}
 }

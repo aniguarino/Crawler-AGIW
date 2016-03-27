@@ -12,24 +12,28 @@ public class MongoMethods {
 	MongoConnection connection;
 	MongoClient mongoClient;
 	MongoDatabase database;
-	MongoCollection<Document> collection;
+	MongoCollection<Document> collection_doc;
+	MongoCollection<Document> collection_img;
 
 	public MongoMethods() {
 		this.connection = new MongoConnection();
 		this.mongoClient = MongoConnection.getMongoClient();
 		this.database = mongoClient.getDatabase("mydb");
-		this.collection = database.getCollection("documenti");
+		this.collection_doc = database.getCollection("documenti");
+		this.collection_img = database.getCollection("immagini");
 	}
 
+	//DOCUMENTS
+	
 	public boolean persistDoc (Doc document) {
 		try{
 			Document doc = new Document("Keyword", document.getKeyword().toString())
 					.append("URL", document.getUrl().toString())
 					.append("Titolo", document.getTitle().toString())
 					.append("Descrizione", document.getDescription().toString())
-					.append("Content", document.getContent().toString());
-			collection.insertOne(doc);
-			System.out.println("Inserito");
+					.append("ContentHTML", document.getContentHTML().toString())
+					.append("ContentIndex", document.getContentIndex().toString());
+			collection_doc.insertOne(doc);
 			return true;
 		}
 		catch (Exception exc) {
@@ -40,12 +44,12 @@ public class MongoMethods {
 	}
 
 	public Long countDocs(){
-		return collection.count();
+		return collection_doc.count();
 	}
 
 	public boolean deleteAllDocs(){
 		try{
-			collection.drop();
+			collection_doc.drop();
 			return true;
 		}
 		catch (Exception exc) {
@@ -56,8 +60,8 @@ public class MongoMethods {
 
 	public Doc getDocbyUrl(String url){
 		try{
-			Document myDoc = collection.find(eq("URL", url)).first();
-			Doc doc = new Doc(myDoc.getString("Keyword"),myDoc.getString("URL"),myDoc.getString("Titolo"),myDoc.getString("Descrizione"),myDoc.getString("Content"));
+			Document myDoc = collection_doc.find(eq("URL", url)).first();
+			Doc doc = new Doc(myDoc.getString("Keyword"),myDoc.getString("URL"),myDoc.getString("Titolo"),myDoc.getString("Descrizione"),myDoc.getString("ContentHTML"),myDoc.getString("ContentIndex"));
 			return doc;
 		}	
 		catch(Exception exc) {
@@ -71,12 +75,85 @@ public class MongoMethods {
 			Document query = new Document();
 			query.append("Keyword", keyword);
 			query.append("URL", url);
-			Document myDoc = collection.find(query).first();
-			Doc doc = new Doc(myDoc.getString("Keyword"),myDoc.getString("URL"),myDoc.getString("Titolo"),myDoc.getString("Descrizione"),myDoc.getString("Content"));
+			Document myDoc = collection_doc.find(query).first();
+			Doc doc = new Doc(myDoc.getString("Keyword"),myDoc.getString("URL"),myDoc.getString("Titolo"),myDoc.getString("Descrizione"),myDoc.getString("ContentHTML"),myDoc.getString("ContentIndex"));
 			return doc;
 		}	
 		catch(Exception exc) {
 			System.out.println("Documento non trovato!");
+			return null;
+		}
+	}
+	
+	//IMAGES
+	
+	public boolean persistImg (Img img) {
+		try{
+			Document image = new Document("Keyword", img.getKeyword().toString())
+					.append("URL_Img", img.getUrlImg().toString())
+					.append("URL_Sorgente", img.getUrlSource().toString())
+					.append("Titolo_Sorgente", img.getTitleSource().toString())
+					.append("Content_Sorgente", img.getContentSource().toString());
+			collection_img.insertOne(image);
+			return true;
+		}
+		catch (Exception exc) {
+			System.out.println(exc);
+			System.out.println("L'immagine con keyword "+ img.getKeyword() +" non e' stata persistita!");
+			return false;
+		}
+	}
+
+	public Long countImgs(){
+		return collection_img.count();
+	}
+
+	public boolean deleteAllImgs(){
+		try{
+			collection_img.drop();
+			return true;
+		}
+		catch (Exception exc) {
+			System.out.println(exc);
+			return false;
+		}
+	}
+
+	public Img getImgbyUrlImg(String urlImg){
+		try{
+			Document myImg = collection_img.find(eq("URL_Img", urlImg)).first();
+			Img img = new Img(myImg.getString("Keyword"),myImg.getString("URL_Img"),myImg.getString("URL_Sorgente"),myImg.getString("Titolo_Sorgente"),myImg.getString("Content_Sorgente"));
+			return img;
+		}	
+		catch(Exception exc) {
+			System.out.println("Immagine non trovata!");
+			return null;
+		}
+	}
+	
+	public Img getImgbyUrlSource(String urlSource){
+		try{
+			Document myImg = collection_img.find(eq("URL_Sorgente", urlSource)).first();
+			Img img = new Img(myImg.getString("Keyword"),myImg.getString("URL_Img"),myImg.getString("URL_Sorgente"),myImg.getString("Titolo_Sorgente"),myImg.getString("Content_Sorgente"));
+			return img;
+		}	
+		catch(Exception exc) {
+			System.out.println("Immagine non trovata!");
+			return null;
+		}
+	}
+
+	public Img getImgbyKeywordandUrlImg(String keyword, String urlImg){
+		try{
+			Document query = new Document();
+			query.append("Keyword", keyword);
+			query.append("URL_Img", urlImg);
+			Document myImg = collection_img.find(query).first();
+			Img img = new Img(myImg.getString("Keyword"),myImg.getString("URL_Img"),myImg.getString("URL_Sorgente"),myImg.getString("Titolo_Sorgente"),myImg.getString("Content_Sorgente"));
+			return img;
+		}	
+		catch(Exception exc) {
+			System.out.println("Immagine non trovata!");
 			return null;
 		}
 	}
