@@ -52,6 +52,7 @@ public class CrawlerEngine {
 				int countDiscarded = 0;
 				
 				while(skip <= skipMax){
+					System.out.println("In esecuzione...");
 					// CREATE THE QUERY
 					queryCurrent = "'" + name.toString() + "'"; 
 					String query = URLEncoder.encode(queryCurrent, Charset.defaultCharset().name());
@@ -96,7 +97,6 @@ public class CrawlerEngine {
 						}
 					}
 					skip += 50;
-					System.out.println("In esecuzione...");
 				}
 
 				// PERSIST ALL DOCUMENTS

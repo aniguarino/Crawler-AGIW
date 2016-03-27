@@ -1,4 +1,4 @@
-.classpath
-*.jar
-*.class
 /bin/
+/lib/
+/.classpath
+/.settings
