@@ -24,7 +24,6 @@ public class MongoMethods {
 	}
 
 	// PERSIST DOCUMENTS
-
 	public boolean persist(Doc document) {
 		try{
 			Document doc = new Document("Keyword", document.getKeyword().toString())
@@ -42,9 +41,9 @@ public class MongoMethods {
 			return false;
 		}
 	}
+	
 
 	// PERSIST IMAGES
-
 	public boolean persist(Img img) {
 		try{
 			Document image = new Document("Keyword", img.getKeyword().toString())

@@ -14,6 +14,7 @@ public class Img {
 		this.titleSource = titleSource;
 		this.contentSource = contentSource;
 	}
+	
 		
 	public String getKeyword() {
 		return keyword;

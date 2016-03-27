@@ -87,11 +87,9 @@ public class CrawlerEngine {
 					if(!mongo.persist(img))
 						countErrorPersistImg++;
 				}
-				
 				System.out.println("Persistiti "+(docsOfKeyword.size()-countErrorPersistDoc)+" documenti su "+docsOfKeyword.size()+" documenti totali da salvare, per la keyword: "+keyword+"; documenti scartarti (privi di ContentHTML): "+countDiscarded);
 				System.out.println("Persistite "+(imgsOfKeyword.size()-countErrorPersistImg)+" immagini su "+imgsOfKeyword.size()+" immagini totali da salvare, per la keyword: "+keyword);
-			}
-			
+			}			
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

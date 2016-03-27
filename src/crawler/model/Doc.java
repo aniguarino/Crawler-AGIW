@@ -17,6 +17,7 @@ public class Doc {
 		this.contentIndex = contentIndex;
 	}
 	
+	
 	public String getKeyword() {
 		return keyword;
 	}
