@@ -31,7 +31,7 @@ public class CrawlerEngine {
 	private MongoMethods mongo = new MongoMethods();
 	private ContentsDoc contentsdoc = new ContentsDoc();
 
-	public final int skipMax = 50;
+	public final int skipMax = 0;
 	//public final int queryMaxForAccount = 4900;
 
 	public CrawlerEngine(String accountKey, String inputPath){
