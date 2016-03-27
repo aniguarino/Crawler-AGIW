@@ -20,7 +20,7 @@ public class MongoDBTest {
 		} */
 		
 		
-		boolean persist = mongoMethods.persistDoc(doc);
+		boolean persist = mongoMethods.persist(doc);
 		if (persist){
 			System.out.println("Documento persistito!");
 		}else{
@@ -30,7 +30,7 @@ public class MongoDBTest {
 		System.out.println("Documenti presenti nel DB: " + mongoMethods.countDocs());
 		
 		
-		boolean persist2 = mongoMethods.persistImg(img);
+		boolean persist2 = mongoMethods.persist(img);
 		if (persist2){
 			System.out.println("Immagine persistita!");
 		}else{

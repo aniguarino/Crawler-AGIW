@@ -23,9 +23,9 @@ public class MongoMethods {
 		this.collection_img = database.getCollection("immagini");
 	}
 
-	//DOCUMENTS
-	
-	public boolean persistDoc (Doc document) {
+	// PERSIST DOCUMENTS
+
+	public boolean persist(Doc document) {
 		try{
 			Document doc = new Document("Keyword", document.getKeyword().toString())
 					.append("URL", document.getUrl().toString())
@@ -39,6 +39,25 @@ public class MongoMethods {
 		catch (Exception exc) {
 			System.out.println(exc);
 			System.out.println("Il documento con keyword "+ document.getKeyword() +" non e' stato persistito!");
+			return false;
+		}
+	}
+
+	// PERSIST IMAGES
+
+	public boolean persist(Img img) {
+		try{
+			Document image = new Document("Keyword", img.getKeyword().toString())
+					.append("URL_Img", img.getUrlImg().toString())
+					.append("URL_Sorgente", img.getUrlSource().toString())
+					.append("Titolo_Sorgente", img.getTitleSource().toString())
+					.append("Content_Sorgente", img.getContentSource().toString());
+			collection_img.insertOne(image);
+			return true;
+		}
+		catch (Exception exc) {
+			System.out.println(exc);
+			System.out.println("L'immagine con keyword "+ img.getKeyword() +" non e' stata persistita!");
 			return false;
 		}
 	}
@@ -84,25 +103,6 @@ public class MongoMethods {
 			return null;
 		}
 	}
-	
-	//IMAGES
-	
-	public boolean persistImg (Img img) {
-		try{
-			Document image = new Document("Keyword", img.getKeyword().toString())
-					.append("URL_Img", img.getUrlImg().toString())
-					.append("URL_Sorgente", img.getUrlSource().toString())
-					.append("Titolo_Sorgente", img.getTitleSource().toString())
-					.append("Content_Sorgente", img.getContentSource().toString());
-			collection_img.insertOne(image);
-			return true;
-		}
-		catch (Exception exc) {
-			System.out.println(exc);
-			System.out.println("L'immagine con keyword "+ img.getKeyword() +" non e' stata persistita!");
-			return false;
-		}
-	}
 
 	public Long countImgs(){
 		return collection_img.count();
@@ -130,7 +130,7 @@ public class MongoMethods {
 			return null;
 		}
 	}
-	
+
 	public Img getImgbyUrlSource(String urlSource){
 		try{
 			Document myImg = collection_img.find(eq("URL_Sorgente", urlSource)).first();
@@ -159,4 +159,4 @@ public class MongoMethods {
 	}
 }
 
-	
+
