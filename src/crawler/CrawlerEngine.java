@@ -42,8 +42,9 @@ public class CrawlerEngine {
 	public void run() throws JSONException{
 		String query_current = "";
 		int skip = 0;
-	
+		
 		try {
+			int count_discarded = 0;
 			// ITERATE FOR ALL THE NAMES IN INPUT
 			for(String name : names){
 				// EVITATE THE DOC DUPLICATE WITH THE HASHSET
@@ -86,10 +87,12 @@ public class CrawlerEngine {
 						//SEARCH CONTENT HTML AND INDEX CONTENT FOR EACH DOCUMENT
 						String contentHTML = contentsdoc.searchHTML(url);
 						String contentIndex = contentsdoc.searchIndex(url);
-						if(contentHTML != "" && contentIndex != ""){
-							//Gestisco solo documenti con HTML e contentIndex presenti
+						if(contentHTML != ""){
+							//Gestisco solo documenti con content HTML presente
 							Doc doc = new Doc(name, url, title, description, contentHTML, contentIndex);
 							docsOfKeyword.add(doc);
+						}else{
+							count_discarded++;
 						}
 					}
 					skip += 50;
@@ -102,7 +105,8 @@ public class CrawlerEngine {
 					if(!mongo.persistDoc(doc))
 						countErrorPersist++;
 				}
-				System.out.println("Persistiti "+(docsOfKeyword.size()-countErrorPersist)+" documenti su "+docsOfKeyword.size()+" documenti totali sulla keyword: "+name);
+				System.out.println("Persistiti "+(docsOfKeyword.size()-countErrorPersist)+" documenti su "+docsOfKeyword.size()+" documenti totali da salvare per la keyword: "+name+"; documenti scartarti (privi di ContentHTML): "+count_discarded);
+				count_discarded = 0;
 			}
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
