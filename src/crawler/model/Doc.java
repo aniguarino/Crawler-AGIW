@@ -74,6 +74,6 @@ public class Doc {
 	@Override
 	public String toString() {
 		return "Doc [keyword=" + keyword + ", url=" + url + ", title=" + title + ", description=" + description
-				+ contentHTML + ", contentHTML=" + ", contentIndex=" + contentIndex + "]";
+				+ ", contentHTML=" + contentHTML  + ", contentIndex=" + contentIndex + "]";
 	}
 }

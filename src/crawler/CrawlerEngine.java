@@ -40,21 +40,21 @@ public class CrawlerEngine {
 	}
 
 	public void run() throws JSONException{
-		String query_current = "";
+		String queryCurrent = "";
 		int skip = 0;
 		
 		try {
-			int count_discarded = 0;
 			// ITERATE FOR ALL THE NAMES IN INPUT
 			for(String name : names){
 				// EVITATE THE DOC DUPLICATE WITH THE HASHSET
 				HashSet<Doc> docsOfKeyword = new HashSet<Doc>();
 				skip = 0; //RESET SKIP
+				int countDiscarded = 0;
 				
 				while(skip <= skipMax){
 					// CREATE THE QUERY
-					query_current = "'" + name.toString() + "'"; 
-					String query = URLEncoder.encode(query_current, Charset.defaultCharset().name());
+					queryCurrent = "'" + name.toString() + "'"; 
+					String query = URLEncoder.encode(queryCurrent, Charset.defaultCharset().name());
 					String queryBingUrl = String.format(bingUrlPattern, query, skip);
 					String accountKeyEnc = Base64.getEncoder().encodeToString((accountKey + ":" + accountKey).getBytes());
 					
@@ -92,7 +92,7 @@ public class CrawlerEngine {
 							Doc doc = new Doc(name, url, title, description, contentHTML, contentIndex);
 							docsOfKeyword.add(doc);
 						}else{
-							count_discarded++;
+							countDiscarded++;
 						}
 					}
 					skip += 50;
@@ -105,8 +105,7 @@ public class CrawlerEngine {
 					if(!mongo.persistDoc(doc))
 						countErrorPersist++;
 				}
-				System.out.println("Persistiti "+(docsOfKeyword.size()-countErrorPersist)+" documenti su "+docsOfKeyword.size()+" documenti totali da salvare per la keyword: "+name+"; documenti scartarti (privi di ContentHTML): "+count_discarded);
-				count_discarded = 0;
+				System.out.println("Persistiti "+(docsOfKeyword.size()-countErrorPersist)+" documenti su "+docsOfKeyword.size()+" documenti totali da salvare, per la keyword: "+name+"; documenti scartarti (privi di ContentHTML): "+countDiscarded);
 			}
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
