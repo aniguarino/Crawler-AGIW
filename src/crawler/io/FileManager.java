@@ -29,8 +29,26 @@ public class FileManager {
         return row;
     }
     
-    public int writeFile(String pathFile){
-    	// To implement
-    	return 0;
+    public void writeFile(String pathFile, String log){
+    	try {
+
+			File file = new File(pathFile);
+
+			// Se il file non esiste, lo creo
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(log);
+			bw.close();
+
+			System.out.println("File di Log scritto correttamente!");
+
+		} catch (IOException e) {
+			System.out.println(
+	                "Errore scrittura File di Log col seguente path: '" + pathFile + "'");
+		}
     }
 }
