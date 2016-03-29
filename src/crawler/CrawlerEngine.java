@@ -37,13 +37,15 @@ public class CrawlerEngine {
 	
 	private String pathLog = "log.txt";
 
-	public final int skipMaxDoc = 0;
-	public final int skipMaxImg = 0;
+	public final int skipMaxDoc;
+	public final int skipMaxImg;
 	//public final int queryMaxForAccount = 4900;
 
-	public CrawlerEngine(String accountKey, String inputPath){
+	public CrawlerEngine(String accountKey, String inputPath, int skipMaxDoc, int skipMaxImg){
 		this.accountKey = accountKey;
 		this.names = fileManager.readNameFromPath(inputPath);
+		this.skipMaxDoc = skipMaxDoc;
+		this.skipMaxImg = skipMaxImg;
 	}
 
 	public void run() throws JSONException{
@@ -69,7 +71,7 @@ public class CrawlerEngine {
 					String keywordEncode = URLEncoder.encode(queryCurrent, Charset.defaultCharset().name());
 
 					// *****QUERY THE DOCUMENT*****
-					countDiscarded = crawlDocument(docsOfKeyword, keyword, keywordEncode, skip, accountKeyEnc);
+					countDiscarded += crawlDocument(docsOfKeyword, keyword, keywordEncode, skip, accountKeyEnc);
 					
 					// *****QUERY THE IMAGE*****
 					if(skip <= skipMaxImg){

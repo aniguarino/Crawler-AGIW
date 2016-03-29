@@ -6,7 +6,10 @@ public class Crawler {
     	final String accountKey = "qblXAUVW0S6ewlnMwwUwKW8euw/SL2+Cs8jF7SLqmjI";
     	final String pathInput = "persone.txt";
     	
-		CrawlerEngine crawlerEngine = new CrawlerEngine(accountKey, pathInput);
+    	final int skipDoc = Integer.parseInt(args[0]);
+    	final int skipImg = Integer.parseInt(args[1]);
+    	
+		CrawlerEngine crawlerEngine = new CrawlerEngine(accountKey, pathInput, skipDoc, skipImg);
 		
 		crawlerEngine.run();
     }
