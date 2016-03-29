@@ -11,6 +11,7 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.HashSet;
 
 import org.json.JSONArray;
@@ -21,6 +22,7 @@ import crawler.io.FileManager;
 import crawler.model.ContentsDoc;
 import crawler.model.Doc;
 import crawler.model.Img;
+import crawler.model.Log;
 import crawler.model.MongoMethods;
 
 public class CrawlerEngine {
@@ -32,6 +34,8 @@ public class CrawlerEngine {
 	private ArrayList<String> names = null;
 	private MongoMethods mongo = new MongoMethods();
 	private ContentsDoc contentsCrawler = new ContentsDoc();
+	
+	private String pathLog = "log.txt";
 
 	public final int skipMaxDoc = 0;
 	public final int skipMaxImg = 0;
@@ -87,8 +91,15 @@ public class CrawlerEngine {
 					if(!mongo.persist(img))
 						countErrorPersistImg++;
 				}
-				System.out.println("Persistiti "+(docsOfKeyword.size()-countErrorPersistDoc)+" documenti su "+docsOfKeyword.size()+" documenti totali da salvare, per la keyword: "+keyword+"; documenti scartarti (privi di ContentHTML): "+countDiscarded);
-				System.out.println("Persistite "+(imgsOfKeyword.size()-countErrorPersistImg)+" immagini su "+imgsOfKeyword.size()+" immagini totali da salvare, per la keyword: "+keyword);
+				
+				Calendar calendar = Calendar.getInstance();
+				Log log = new Log(keyword, (docsOfKeyword.size()-countErrorPersistDoc), docsOfKeyword.size(), countDiscarded,
+						(imgsOfKeyword.size()-countErrorPersistImg), imgsOfKeyword.size(), calendar.getTime());
+				
+				System.out.println("Persistiti "+log.getTruePersistDoc()+" documenti su "+log.getTrueMaxPersistDoc()+" documenti totali da salvare, per la keyword: "+keyword+"; documenti scartarti (privi di ContentHTML): "+log.getDiscardedDoc());
+				System.out.println("Persistite "+log.getTruePersistImg()+" immagini su "+log.getTrueMaxPersistImg()+" immagini totali da salvare, per la keyword: "+keyword);
+				
+				fileManager.writeFile(pathLog, log.toString());
 			}			
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
