@@ -39,12 +39,12 @@ public class FileManager {
 				file.createNewFile();
 			}
 
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			FileWriter fw = new FileWriter(file.getAbsoluteFile(),true);
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(log);
 			bw.close();
 
-			System.out.println("File di Log scritto correttamente!");
+			System.out.println("(File di Log aggiornato correttamente!)");
 
 		} catch (IOException e) {
 			System.out.println(

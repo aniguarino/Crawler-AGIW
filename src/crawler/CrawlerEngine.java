@@ -99,8 +99,9 @@ public class CrawlerEngine {
 				System.out.println("Persistiti "+log.getTruePersistDoc()+" documenti su "+log.getTrueMaxPersistDoc()+" documenti totali da salvare, per la keyword: "+keyword+"; documenti scartarti (privi di ContentHTML): "+log.getDiscardedDoc());
 				System.out.println("Persistite "+log.getTruePersistImg()+" immagini su "+log.getTrueMaxPersistImg()+" immagini totali da salvare, per la keyword: "+keyword);
 				
-				fileManager.writeFile(pathLog, log.toString());
-			}			
+				fileManager.writeFile(pathLog, log.toString()+";\n");
+			}
+			System.out.println(".\n.\n...Esecuzione Terminata con successo...");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,7 +115,7 @@ public class CrawlerEngine {
 	}
 	
 	// THIS METHOD MAKE THE CRAWLING OF THE DOCUMENT HTML ABOUT ONE KEYWORD AND RETURN THE NUMBER OF THE DISCARDED DOCUMENT
-	private int crawlDocument(HashSet<Doc> docsOfKeyword, String keyword, String keywordEncode, int skip, String accountKeyEnc) throws IOException{	
+	private int crawlDocument(HashSet<Doc> docsOfKeyword, String keyword, String keywordEncode, int skip, String accountKeyEnc) throws IOException, JSONException{	
 		int countDiscarded = 0;
 		String queryBingUrlDoc = String.format(bingUrlPatternDoc, keywordEncode, skip);
 
@@ -160,7 +161,7 @@ public class CrawlerEngine {
 	}
 
 	// THIS METHOD MAKE THE CRAWLING OF THE IMAGE ABOUT ONE KEYWORD
-	private void crawlImage(HashSet<Img> imgsOfKeyword, String keyword, String keywordEncode, int skip, String accountKeyEnc) throws IOException{
+	private void crawlImage(HashSet<Img> imgsOfKeyword, String keyword, String keywordEncode, int skip, String accountKeyEnc) throws IOException, JSONException{
 		String queryBingUrlImg = String.format(bingUrlPatternImg, keywordEncode, skip);
 
 		// CREATE THE CONNECTION
