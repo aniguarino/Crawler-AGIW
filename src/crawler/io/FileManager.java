@@ -3,6 +3,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class FileManager {
+	
 	public FileManager (){	
 	}
 	
@@ -20,7 +21,7 @@ public class FileManager {
             bufferedReader.close();         
         }
         catch(FileNotFoundException ex) {
-            System.out.println("Errore apertura File: '" + pathFile + "'");                
+            System.out.println("Errore apertura File: '" + pathFile + "'");              
         }
         catch(IOException ex) {
             System.out.println(

@@ -28,8 +28,9 @@ import crawler.model.MongoMethods;
 public class CrawlerEngine {
 
 	private String accountKey;
-	private String bingUrlPatternDoc = "https://api.datamarket.azure.com/Bing/Search/Web?Query=%s&$skip=%d&$format=JSON";
-	private String bingUrlPatternImg = "https://api.datamarket.azure.com/Bing/Search/Image?Query=%s&$skip=%d&$format=JSON";
+	private String bingUrlPatternDoc = "https://api.datamarket.azure.com/Bing/Search/Web?Query=%s&Market=%s&$skip=%d&$format=JSON";
+	private String bingUrlPatternImg = "https://api.datamarket.azure.com/Bing/Search/Image?Query=%s&Market=%s&$skip=%d&$format=JSON";
+	private String market = "it-IT";
 	private FileManager fileManager = new FileManager();
 	private ArrayList<String> names = null;
 	private MongoMethods mongo = new MongoMethods();
@@ -67,15 +68,17 @@ public class CrawlerEngine {
 					System.out.println("In esecuzione...");
 					
 					// CREATE THE QUERY
-					String queryCurrent = "'" + keyword.toString() + "'"; 
+					String queryCurrent = "'" + keyword + "'"; 
 					String keywordEncode = URLEncoder.encode(queryCurrent, Charset.defaultCharset().name());
+					String marketCurrent = "'" + market + "'"; 
+					String marketEncode = URLEncoder.encode(marketCurrent, Charset.defaultCharset().name());
 
 					// *****QUERY THE DOCUMENT*****
-					countDiscarded += crawlDocument(docsOfKeyword, keyword, keywordEncode, skip, accountKeyEnc);
+					countDiscarded += crawlDocument(docsOfKeyword, keyword, keywordEncode, marketEncode, skip, accountKeyEnc);
 					
 					// *****QUERY THE IMAGE*****
 					if(skip <= skipMaxImg){
-						crawlImage(imgsOfKeyword, keyword, keywordEncode, skip, accountKeyEnc);
+						crawlImage(imgsOfKeyword, keyword, keywordEncode, marketEncode, skip, accountKeyEnc);
 					}
 					skip += 50;
 				}
@@ -105,21 +108,18 @@ public class CrawlerEngine {
 			}
 			System.out.println(".\n.\n...Esecuzione Terminata con successo...");
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fileManager.writeFile(pathLog, e.getMessage()+";\n");
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fileManager.writeFile(pathLog, e.getMessage()+";\n");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fileManager.writeFile(pathLog, e.getMessage()+";\n");
 		}
 	}
 	
 	// THIS METHOD MAKE THE CRAWLING OF THE DOCUMENT HTML ABOUT ONE KEYWORD AND RETURN THE NUMBER OF THE DISCARDED DOCUMENT
-	private int crawlDocument(HashSet<Doc> docsOfKeyword, String keyword, String keywordEncode, int skip, String accountKeyEnc) throws IOException, JSONException{	
+	private int crawlDocument(HashSet<Doc> docsOfKeyword, String keyword, String keywordEncode, String marketEncode, int skip, String accountKeyEnc) throws IOException, JSONException{	
 		int countDiscarded = 0;
-		String queryBingUrlDoc = String.format(bingUrlPatternDoc, keywordEncode, skip);
+		String queryBingUrlDoc = String.format(bingUrlPatternDoc, keywordEncode, marketEncode, skip);
 
 		// CREATE THE CONNECTION
 		URL urlBingDoc = new URL(queryBingUrlDoc);
@@ -163,8 +163,8 @@ public class CrawlerEngine {
 	}
 
 	// THIS METHOD MAKE THE CRAWLING OF THE IMAGE ABOUT ONE KEYWORD
-	private void crawlImage(HashSet<Img> imgsOfKeyword, String keyword, String keywordEncode, int skip, String accountKeyEnc) throws IOException, JSONException{
-		String queryBingUrlImg = String.format(bingUrlPatternImg, keywordEncode, skip);
+	private void crawlImage(HashSet<Img> imgsOfKeyword, String keyword, String keywordEncode, String marketEncode, int skip, String accountKeyEnc) throws IOException, JSONException{
+		String queryBingUrlImg = String.format(bingUrlPatternImg, keywordEncode, marketEncode, skip);
 
 		// CREATE THE CONNECTION
 		URL urlBingImg = new URL(queryBingUrlImg);
