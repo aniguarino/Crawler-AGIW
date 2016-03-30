@@ -1,7 +1,5 @@
 package crawler.model;
 
-import java.util.Date;
-
 public class Log {
 	private String keyword;
 	private int truePersistDoc;
@@ -9,9 +7,9 @@ public class Log {
 	private int discardedDoc;
 	private int truePersistImg;
 	private int trueMaxPersistImg;
-	private Date timestamp;
+	private String timestamp;
 	
-	public Log(String keyword, int truePersistDoc, int trueMaxPersistDoc, int discardedDoc, int truePersistImg, int trueMaxPersistImg, Date timestamp) {
+	public Log(String keyword, int truePersistDoc, int trueMaxPersistDoc, int discardedDoc, int truePersistImg, int trueMaxPersistImg, String timestamp) {
 		this.keyword = keyword;
 		this.truePersistDoc = truePersistDoc;
 		this.trueMaxPersistDoc = trueMaxPersistDoc;
@@ -69,11 +67,11 @@ public class Log {
 		this.trueMaxPersistImg = trueMaxPersistImg;
 	}
 
-	public Date getTimestamp() {
+	public String getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(Date timestamp) {
+	public void setTimestamp(String timestamp) {
 		this.timestamp = timestamp;
 	}
 
@@ -81,6 +79,6 @@ public class Log {
 	public String toString() {
 		return "Log [keyword=" + keyword + ", truePersistDoc=" + truePersistDoc + ", trueMaxPersistDoc="
 				+ trueMaxPersistDoc + ", discardedDoc=" + discardedDoc + ", truePersistImg=" + truePersistImg
-				+ ", trueMaxPersistImg=" + trueMaxPersistImg + ", timestamp=" + timestamp.toString() + "]";
+				+ ", trueMaxPersistImg=" + trueMaxPersistImg + ", timestamp=" + timestamp + "]";
 	}
 }

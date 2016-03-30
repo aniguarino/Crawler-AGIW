@@ -9,10 +9,13 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.TimeZone;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,9 +100,12 @@ public class CrawlerEngine {
 						countErrorPersistImg++;
 				}
 				
-				Calendar calendar = Calendar.getInstance();
+				Date localTime = new Date();
+				DateFormat converter = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+				converter.setTimeZone(TimeZone.getTimeZone("Europe/Rome"));
+				
 				Log log = new Log(keyword, (docsOfKeyword.size()-countErrorPersistDoc), docsOfKeyword.size(), countDiscarded,
-						(imgsOfKeyword.size()-countErrorPersistImg), imgsOfKeyword.size(), calendar.getTime());
+						(imgsOfKeyword.size()-countErrorPersistImg), imgsOfKeyword.size(), converter.format(localTime));
 				
 				System.out.println("Persistiti "+log.getTruePersistDoc()+" documenti su "+log.getTrueMaxPersistDoc()+" documenti totali da salvare, per la keyword: "+keyword+"; documenti scartarti (privi di ContentHTML): "+log.getDiscardedDoc());
 				System.out.println("Persistite "+log.getTruePersistImg()+" immagini su "+log.getTrueMaxPersistImg()+" immagini totali da salvare, per la keyword: "+keyword);
