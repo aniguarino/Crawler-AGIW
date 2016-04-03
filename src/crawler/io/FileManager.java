@@ -7,7 +7,7 @@ public class FileManager {
 	public FileManager (){	
 	}
 	
-    public ArrayList<String> readNameFromPath(String pathFile) {
+    public ArrayList<String> readStringFromPath(String pathFile) {
         String line = null;
         ArrayList<String> row = new ArrayList<String>();
         

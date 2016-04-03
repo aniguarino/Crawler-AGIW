@@ -6,16 +6,17 @@ public class Img {
 	private String urlSource;
 	private String titleSource;
 	private String contentSource;
+	private String category;
 	
-	public Img(String keyword, String urlImg, String urlSource, String titleSource, String contentSource) {
+	public Img(String keyword, String urlImg, String urlSource, String titleSource, String contentSource, String category) {
 		this.keyword = keyword;
 		this.urlImg = urlImg;
 		this.urlSource = urlSource;
 		this.titleSource = titleSource;
 		this.contentSource = contentSource;
+		this.category = category;
 	}
 	
-		
 	public String getKeyword() {
 		return keyword;
 	}
@@ -56,6 +57,14 @@ public class Img {
 		this.contentSource = contentSource;
 	}
 
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
 	public boolean equals(Img doc){
 		if(keyword.equals(doc.getKeyword()) && urlImg.equals(doc.getUrlImg()) && urlSource.equals(doc.getUrlSource()) &&
 				titleSource.equals(doc.getTitleSource()) && contentSource.equals(doc.getContentSource()))
@@ -65,7 +74,7 @@ public class Img {
 
 	@Override
 	public String toString() {
-		return "Doc [keyword=" + keyword + ", urlImg=" + urlImg + ", urlSource=" + urlSource + ", titleSource=" + titleSource
-				+ ", contentSource=" + contentSource + "]";
+		return "Img [keyword=" + keyword + ", urlImg=" + urlImg + ", urlSource=" + urlSource + ", titleSource="
+				+ titleSource + ", contentSource=" + contentSource + ", category=" + category + "]";
 	}
 }

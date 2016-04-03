@@ -38,16 +38,18 @@ public class CrawlerEngine {
 	private ArrayList<String> names = null;
 	private MongoMethods mongo = new MongoMethods();
 	private ContentsDoc contentsCrawler = new ContentsDoc();
-	
+	private TextAnalizer textAnalizer = new TextAnalizer();
+
 	private String pathLog = "log.txt";
 
 	public final int skipMaxDoc;
 	public final int skipMaxImg;
 	//public final int queryMaxForAccount = 4900;
 
-	public CrawlerEngine(String accountKey, String inputPath, int skipMaxDoc, int skipMaxImg){
+	public CrawlerEngine(String accountKey, String textAnalizerKey, String inputPath, int skipMaxDoc, int skipMaxImg){
 		this.accountKey = accountKey;
-		this.names = fileManager.readNameFromPath(inputPath);
+		this.textAnalizer.setKey(textAnalizerKey);
+		this.names = fileManager.readStringFromPath(inputPath);
 		this.skipMaxDoc = skipMaxDoc;
 		this.skipMaxImg = skipMaxImg;
 	}
@@ -63,13 +65,13 @@ public class CrawlerEngine {
 				// EVITATE THE DOC DUPLICATE WITH THE HASHSET
 				HashSet<Doc> docsOfKeyword = new HashSet<Doc>();
 				HashSet<Img> imgsOfKeyword = new HashSet<Img>();
-				
+
 				skip = 0; // RESET SKIP
 				int countDiscarded = 0;
 
 				while(skip <= skipMaxDoc){
 					System.out.println("In esecuzione...");
-					
+
 					// CREATE THE QUERY
 					String queryCurrent = "'" + keyword + "'"; 
 					String keywordEncode = URLEncoder.encode(queryCurrent, Charset.defaultCharset().name());
@@ -77,11 +79,15 @@ public class CrawlerEngine {
 					String marketEncode = URLEncoder.encode(marketCurrent, Charset.defaultCharset().name());
 
 					// *****QUERY THE DOCUMENT*****
-					countDiscarded += crawlDocument(docsOfKeyword, keyword, keywordEncode, marketEncode, skip, accountKeyEnc);
-					
-					// *****QUERY THE IMAGE*****
-					if(skip <= skipMaxImg){
-						crawlImage(imgsOfKeyword, keyword, keywordEncode, marketEncode, skip, accountKeyEnc);
+					try {
+						countDiscarded += crawlDocument(docsOfKeyword, keyword, keywordEncode, marketEncode, skip, accountKeyEnc);
+
+						// *****QUERY THE IMAGE*****
+						if(skip <= skipMaxImg){
+							crawlImage(imgsOfKeyword, keyword, keywordEncode, marketEncode, skip, accountKeyEnc);
+						}
+					} catch (InterruptedException e) {
+						fileManager.writeFile(pathLog, e.getMessage()+";\n");
 					}
 					skip += 50;
 				}
@@ -89,27 +95,27 @@ public class CrawlerEngine {
 				// PERSIST ALL DOCUMENTS AND IMAGES
 				int countErrorPersistDoc = 0;
 				int countErrorPersistImg = 0;
-				
+
 				for(Doc doc : docsOfKeyword){
 					if(!mongo.persist(doc))
 						countErrorPersistDoc++;
 				}
-				
+
 				for(Img img : imgsOfKeyword){
 					if(!mongo.persist(img))
 						countErrorPersistImg++;
 				}
-				
+
 				Date localTime = new Date();
 				DateFormat converter = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
 				converter.setTimeZone(TimeZone.getTimeZone("Europe/Rome"));
-				
+
 				Log log = new Log(keyword, (docsOfKeyword.size()-countErrorPersistDoc), docsOfKeyword.size(), countDiscarded,
 						(imgsOfKeyword.size()-countErrorPersistImg), imgsOfKeyword.size(), converter.format(localTime));
-				
+
 				System.out.println("Persistiti "+log.getTruePersistDoc()+" documenti su "+log.getTrueMaxPersistDoc()+" documenti totali da salvare, per la keyword: "+keyword+"; documenti scartarti (privi di ContentHTML): "+log.getDiscardedDoc());
 				System.out.println("Persistite "+log.getTruePersistImg()+" immagini su "+log.getTrueMaxPersistImg()+" immagini totali da salvare, per la keyword: "+keyword);
-				
+
 				fileManager.writeFile(pathLog, log.toString()+";\n");
 			}
 			System.out.println(".\n.\n...Esecuzione Terminata con successo...");
@@ -121,9 +127,10 @@ public class CrawlerEngine {
 			fileManager.writeFile(pathLog, e.getMessage()+";\n");
 		}
 	}
-	
+
 	// THIS METHOD MAKE THE CRAWLING OF THE DOCUMENT HTML ABOUT ONE KEYWORD AND RETURN THE NUMBER OF THE DISCARDED DOCUMENT
-	private int crawlDocument(HashSet<Doc> docsOfKeyword, String keyword, String keywordEncode, String marketEncode, int skip, String accountKeyEnc) throws IOException, JSONException{	
+	private int crawlDocument(HashSet<Doc> docsOfKeyword, String keyword, String keywordEncode, String marketEncode, int skip, String accountKeyEnc) throws IOException, JSONException, InterruptedException{	
+		long time = System.currentTimeMillis();
 		int countDiscarded = 0;
 		String queryBingUrlDoc = String.format(bingUrlPatternDoc, keywordEncode, marketEncode, skip);
 
@@ -153,13 +160,21 @@ public class CrawlerEngine {
 			String titleDoc = (String)aResultDoc.get("Title");
 			String descriptionDoc = (String)aResultDoc.get("Description");
 
-			//SEARCH CONTENT HTML AND INDEX CONTENT FOR EACH DOCUMENT
+			// SEARCH CONTENT HTML, INDEX CONTENT AND CATEGORY FOR EACH DOCUMENT
 			String contentHTMLDoc = contentsCrawler.searchHTML(urlDoc);
 			String contentIndexDoc = contentsCrawler.searchIndex(urlDoc);
+
+			// TIMEOUT FOR CATEGORY API (2 QUERY AT SECOND MAX)
+			while((System.currentTimeMillis()-time)<500){
+				Thread.sleep(101);
+			}
+			String category = textAnalizer.getCategory(contentIndexDoc);
+			time = System.currentTimeMillis();
+
 			if(contentHTMLDoc != ""){
 				// MANAGE ONLY THE DOCUMENT WITH CONTENTHTML
 				// CREATING THE DOCUMENT OBJECT
-				Doc doc = new Doc(keyword, urlDoc, titleDoc, descriptionDoc, contentHTMLDoc, contentIndexDoc);
+				Doc doc = new Doc(keyword, urlDoc, titleDoc, descriptionDoc, contentHTMLDoc, contentIndexDoc, category);
 				docsOfKeyword.add(doc);
 			}else{
 				countDiscarded++;
@@ -169,7 +184,8 @@ public class CrawlerEngine {
 	}
 
 	// THIS METHOD MAKE THE CRAWLING OF THE IMAGE ABOUT ONE KEYWORD
-	private void crawlImage(HashSet<Img> imgsOfKeyword, String keyword, String keywordEncode, String marketEncode, int skip, String accountKeyEnc) throws IOException, JSONException{
+	private void crawlImage(HashSet<Img> imgsOfKeyword, String keyword, String keywordEncode, String marketEncode, int skip, String accountKeyEnc) throws IOException, JSONException, InterruptedException{
+		long time = System.currentTimeMillis();
 		String queryBingUrlImg = String.format(bingUrlPatternImg, keywordEncode, marketEncode, skip);
 
 		// CREATE THE CONNECTION
@@ -201,8 +217,15 @@ public class CrawlerEngine {
 			// SEARCH CONTENT HTML OF THE SOURCE PAGE FOR EACH IMAGE
 			String contentSourceImg = contentsCrawler.searchIndex(urlSourceImg);
 
+			// TIMEOUT FOR CATEGORY API (2 QUERY AT SECOND MAX)
+			while((System.currentTimeMillis()-time)<500){
+				Thread.sleep(101);
+			}
+			String category = textAnalizer.getCategory(contentSourceImg);
+			time = System.currentTimeMillis();
+
 			// CREATING THE IMAGE OBJECT
-			Img img = new Img(keyword, urlImg, urlSourceImg, titleSourceImg, contentSourceImg);
+			Img img = new Img(keyword, urlImg, urlSourceImg, titleSourceImg, contentSourceImg, category);
 			imgsOfKeyword.add(img);
 		}
 	}
