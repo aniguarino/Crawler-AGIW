@@ -130,6 +130,7 @@ public class CrawlerEngine {
 
 	// THIS METHOD MAKE THE CRAWLING OF THE DOCUMENT HTML ABOUT ONE KEYWORD AND RETURN THE NUMBER OF THE DISCARDED DOCUMENT
 	private int crawlDocument(HashSet<Doc> docsOfKeyword, String keyword, String keywordEncode, String marketEncode, int skip, String accountKeyEnc) throws IOException, JSONException, InterruptedException{	
+		int countCat = 0;
 		long time = System.currentTimeMillis();
 		int countDiscarded = 0;
 		String queryBingUrlDoc = String.format(bingUrlPatternDoc, keywordEncode, marketEncode, skip);
@@ -168,7 +169,11 @@ public class CrawlerEngine {
 			while((System.currentTimeMillis()-time)<500){
 				Thread.sleep(101);
 			}
+			
 			String category = textAnalizer.getCategory(contentIndexDoc);
+			if(category.equals("Senza categoria"))
+				countCat++;
+			
 			time = System.currentTimeMillis();
 
 			if(contentHTMLDoc != ""){
@@ -179,12 +184,17 @@ public class CrawlerEngine {
 			}else{
 				countDiscarded++;
 			}
+			
+			if(countCat == 75){
+				throw new RuntimeException("*** Error for banned! ***");
+			}
 		}
 		return countDiscarded;
 	}
 
 	// THIS METHOD MAKE THE CRAWLING OF THE IMAGE ABOUT ONE KEYWORD
 	private void crawlImage(HashSet<Img> imgsOfKeyword, String keyword, String keywordEncode, String marketEncode, int skip, String accountKeyEnc) throws IOException, JSONException, InterruptedException{
+		int countCat = 0;
 		long time = System.currentTimeMillis();
 		String queryBingUrlImg = String.format(bingUrlPatternImg, keywordEncode, marketEncode, skip);
 
@@ -222,11 +232,18 @@ public class CrawlerEngine {
 				Thread.sleep(101);
 			}
 			String category = textAnalizer.getCategory(contentSourceImg);
+			if(category.equals("Senza categoria"))
+				countCat++;
+			
 			time = System.currentTimeMillis();
 
 			// CREATING THE IMAGE OBJECT
 			Img img = new Img(keyword, urlImg, urlSourceImg, titleSourceImg, contentSourceImg, category);
 			imgsOfKeyword.add(img);
+			
+			if(countCat == 75){
+				throw new RuntimeException("*** Error for banned! ***");
+			}
 		}
 	}
 }
