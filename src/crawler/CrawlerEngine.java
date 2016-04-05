@@ -189,6 +189,7 @@ public class CrawlerEngine {
 				throw new RuntimeException("*** Error for banned! ***");
 			}
 		}
+		
 		return countDiscarded;
 	}
 
