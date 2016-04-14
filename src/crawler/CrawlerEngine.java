@@ -166,20 +166,19 @@ public class CrawlerEngine {
 				// SEARCH CONTENT HTML, INDEX CONTENT AND CATEGORY FOR EACH DOCUMENT
 				String contentHTMLDoc = contentsCrawler.searchHTML(urlDoc);
 				String contentIndexDoc = contentsCrawler.searchIndex(urlDoc);
-
-				// TIMEOUT FOR CATEGORY API (2 QUERY AT SECOND MAX)
-				while((System.currentTimeMillis()-time)<500){
-					Thread.sleep(101);
-				}
-
-				String category = "";//textAnalizer.getCategory(contentIndexDoc);
-				if(category.equals("Senza categoria"))
-					countCat++;
-
-				time = System.currentTimeMillis();
 				
 				if(contentHTMLDoc != ""){
 					// MANAGE ONLY THE DOCUMENT WITH CONTENTHTML
+					// TIMEOUT FOR CATEGORY API (2 QUERY AT SECOND MAX)
+					while((System.currentTimeMillis()-time)<500){
+						Thread.sleep(101);
+					}
+	
+					String category = "";//textAnalizer.getCategory(contentIndexDoc);
+					if(category.equals("Senza categoria"))
+						countCat++;
+					time = System.currentTimeMillis();
+					
 					// CREATING THE DOCUMENT OBJECT
 					Doc doc = new Doc(keyword, urlDoc, titleDoc, descriptionDoc, contentHTMLDoc, contentIndexDoc, category);
 
