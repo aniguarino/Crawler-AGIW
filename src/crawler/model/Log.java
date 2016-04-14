@@ -5,15 +5,17 @@ public class Log {
 	private int truePersistDoc;
 	private int trueMaxPersistDoc;
 	private int discardedDoc;
+	private int discardedImg;
 	private int truePersistImg;
 	private int trueMaxPersistImg;
 	private String timestamp;
 	
-	public Log(String keyword, int truePersistDoc, int trueMaxPersistDoc, int discardedDoc, int truePersistImg, int trueMaxPersistImg, String timestamp) {
+	public Log(String keyword, int truePersistDoc, int trueMaxPersistDoc, int discardedDoc, int discardedImg, int truePersistImg, int trueMaxPersistImg, String timestamp) {
 		this.keyword = keyword;
 		this.truePersistDoc = truePersistDoc;
 		this.trueMaxPersistDoc = trueMaxPersistDoc;
 		this.discardedDoc = discardedDoc;
+		this.discardedImg = discardedImg;
 		this.truePersistImg = truePersistImg;
 		this.trueMaxPersistImg = trueMaxPersistImg;
 		this.timestamp = timestamp;
@@ -74,11 +76,20 @@ public class Log {
 	public void setTimestamp(String timestamp) {
 		this.timestamp = timestamp;
 	}
+	
+	public int getDiscardedImg() {
+		return discardedImg;
+	}
+
+	public void setDiscardedImg(int discardedImg) {
+		this.discardedImg = discardedImg;
+	}
 
 	@Override
 	public String toString() {
 		return "Log [keyword=" + keyword + ", truePersistDoc=" + truePersistDoc + ", trueMaxPersistDoc="
-				+ trueMaxPersistDoc + ", discardedDoc=" + discardedDoc + ", truePersistImg=" + truePersistImg
-				+ ", trueMaxPersistImg=" + trueMaxPersistImg + ", timestamp=" + timestamp + "]";
+				+ trueMaxPersistDoc + ", discardedDoc=" + discardedDoc + ", discardedImg=" + discardedImg
+				+ ", truePersistImg=" + truePersistImg + ", trueMaxPersistImg=" + trueMaxPersistImg + ", timestamp="
+				+ timestamp + "]";
 	}
 }

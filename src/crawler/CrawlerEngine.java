@@ -29,7 +29,6 @@ import crawler.model.Log;
 import crawler.model.MongoMethods;
 
 public class CrawlerEngine {
-
 	private String accountKey;
 	private String bingUrlPatternDoc = "https://api.datamarket.azure.com/Bing/Search/Web?Query=%s&Market=%s&$skip=%d&$format=JSON";
 	private String bingUrlPatternImg = "https://api.datamarket.azure.com/Bing/Search/Image?Query=%s&Market=%s&$skip=%d&$format=JSON";
@@ -62,11 +61,12 @@ public class CrawlerEngine {
 			// ITERATE FOR ALL THE NAMES IN INPUT
 			for(String keyword : names){
 				// EVITATE THE DOC DUPLICATE WITH THE HASHSET
-				HashSet<Doc> docsOfKeyword = new HashSet<Doc>();
-				HashSet<Img> imgsOfKeyword = new HashSet<Img>();
+				ArrayList<Doc> docsOfKeyword = new ArrayList<Doc>();
+				ArrayList<Img> imgsOfKeyword = new ArrayList<Img>();
 
 				skip = 0; // RESET SKIP
-				int countDiscarded = 0;
+				int countDiscardedDoc = 0;
+				int countDiscardedImg = 0;
 
 				while(skip <= skipMaxDoc){
 					System.out.println("In esecuzione...");
@@ -79,11 +79,11 @@ public class CrawlerEngine {
 
 					// *****QUERY THE DOCUMENT*****
 					try {
-						countDiscarded += crawlDocument(docsOfKeyword, keyword, keywordEncode, marketEncode, skip, accountKeyEnc);
-
+						countDiscardedDoc += crawlDocument(docsOfKeyword, keyword, keywordEncode, marketEncode, skip, accountKeyEnc);
+						
 						// *****QUERY THE IMAGE*****
 						if(skip <= skipMaxImg){
-							crawlImage(imgsOfKeyword, keyword, keywordEncode, marketEncode, skip, accountKeyEnc);
+							countDiscardedImg += crawlImage(imgsOfKeyword, keyword, keywordEncode, marketEncode, skip, accountKeyEnc);
 						}
 					} catch (InterruptedException e) {
 						fileManager.writeFile(pathLog, e.getMessage()+";\n");
@@ -99,7 +99,7 @@ public class CrawlerEngine {
 					if(!mongo.persist(doc))
 						countErrorPersistDoc++;
 				}
-
+				
 				for(Img img : imgsOfKeyword){
 					if(!mongo.persist(img))
 						countErrorPersistImg++;
@@ -109,15 +109,15 @@ public class CrawlerEngine {
 				DateFormat converter = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
 				converter.setTimeZone(TimeZone.getTimeZone("Europe/Rome"));
 
-				Log log = new Log(keyword, (docsOfKeyword.size()-countErrorPersistDoc), docsOfKeyword.size(), countDiscarded,
-						(imgsOfKeyword.size()-countErrorPersistImg), imgsOfKeyword.size(), converter.format(localTime));
+				Log log = new Log(keyword, (docsOfKeyword.size()-countErrorPersistDoc), docsOfKeyword.size(), countDiscardedDoc,
+						(imgsOfKeyword.size()-countErrorPersistImg), countDiscardedImg, imgsOfKeyword.size(), converter.format(localTime));
 
-				System.out.println("Persistiti "+log.getTruePersistDoc()+" documenti su "+log.getTrueMaxPersistDoc()+" documenti totali da salvare, per la keyword: "+keyword+"; documenti scartarti (privi di ContentHTML): "+log.getDiscardedDoc());
-				System.out.println("Persistite "+log.getTruePersistImg()+" immagini su "+log.getTrueMaxPersistImg()+" immagini totali da salvare, per la keyword: "+keyword);
+				System.out.println("Persistiti "+log.getTruePersistDoc()+" documenti su "+log.getTrueMaxPersistDoc()+" documenti totali da salvare, per la keyword: "+keyword+"; documenti scartarti: "+log.getDiscardedDoc());
+				System.out.println("Persistite "+log.getTruePersistImg()+" immagini su "+log.getTrueMaxPersistImg()+" immagini totali da salvare, per la keyword: "+keyword+"; immagini scartarte: "+log.getDiscardedImg());
 
 				fileManager.writeFile(pathLog, log.toString()+";\n");
 			}
-			System.out.println(".\n.\n...Esecuzione Terminata con successo...");
+			System.out.println("\n\n...Esecuzione Terminata con successo...");
 		} catch (UnsupportedEncodingException e) {
 			fileManager.writeFile(pathLog, e.getMessage()+";\n");
 		} catch (MalformedURLException e) {
@@ -128,7 +128,7 @@ public class CrawlerEngine {
 	}
 
 	// THIS METHOD MAKE THE CRAWLING OF THE DOCUMENT HTML ABOUT ONE KEYWORD AND RETURN THE NUMBER OF THE DISCARDED DOCUMENT
-	private int crawlDocument(HashSet<Doc> docsOfKeyword, String keyword, String keywordEncode, String marketEncode, int skip, String accountKeyEnc) throws IOException, JSONException, InterruptedException{	
+	private int crawlDocument(ArrayList<Doc> docsOfKeyword, String keyword, String keywordEncode, String marketEncode, int skip, String accountKeyEnc) throws IOException, JSONException, InterruptedException{	
 		int countCat = 0;
 		long time = System.currentTimeMillis();
 		int countDiscarded = 0;
@@ -139,7 +139,7 @@ public class CrawlerEngine {
 		URLConnection connectionDoc = urlBingDoc.openConnection();
 		connectionDoc.setRequestProperty("Authorization", "Basic " + accountKeyEnc);
 		BufferedReader inDoc = new BufferedReader(new InputStreamReader(connectionDoc.getInputStream()));
-
+		
 		// MANAGE THE RESPONSE
 		String inputLineDoc;
 		StringBuilder responseDoc = new StringBuilder();
@@ -172,12 +172,12 @@ public class CrawlerEngine {
 					Thread.sleep(101);
 				}
 
-				String category = textAnalizer.getCategory(contentIndexDoc);
+				String category = "";//textAnalizer.getCategory(contentIndexDoc);
 				if(category.equals("Senza categoria"))
 					countCat++;
 
 				time = System.currentTimeMillis();
-
+				
 				if(contentHTMLDoc != ""){
 					// MANAGE ONLY THE DOCUMENT WITH CONTENTHTML
 					// CREATING THE DOCUMENT OBJECT
@@ -191,16 +191,18 @@ public class CrawlerEngine {
 				if(countCat == 75){
 					throw new RuntimeException("*** Error for banned! ***");
 				}
+			}else{
+				countDiscarded++;
 			}
 		}
-
 		return countDiscarded;
 	}
 
 	// THIS METHOD MAKE THE CRAWLING OF THE IMAGE ABOUT ONE KEYWORD
-	private void crawlImage(HashSet<Img> imgsOfKeyword, String keyword, String keywordEncode, String marketEncode, int skip, String accountKeyEnc) throws IOException, JSONException, InterruptedException{
-//		int countCat = 0;
+	private int crawlImage(ArrayList<Img> imgsOfKeyword, String keyword, String keywordEncode, String marketEncode, int skip, String accountKeyEnc) throws IOException, JSONException, InterruptedException{
+		int countCat = 0;
 		long time = System.currentTimeMillis();
+		int countDiscarded = 0;
 		String queryBingUrlImg = String.format(bingUrlPatternImg, keywordEncode, marketEncode, skip);
 
 		// CREATE THE CONNECTION
@@ -208,7 +210,7 @@ public class CrawlerEngine {
 		URLConnection connectionImg = urlBingImg.openConnection();
 		connectionImg.setRequestProperty("Authorization", "Basic " + accountKeyEnc);
 		BufferedReader inImg = new BufferedReader(new InputStreamReader(connectionImg.getInputStream()));
-
+		
 		// MANAGE THE RESPONSE
 		String inputLineImg;
 		StringBuilder responseImg = new StringBuilder();
@@ -239,33 +241,36 @@ public class CrawlerEngine {
 				while((System.currentTimeMillis()-time)<500){
 					Thread.sleep(101);
 				}
-//				String category = textAnalizer.getCategory(contentSourceImg);
-//				if(category.equals("Senza categoria"))
-//					countCat++;
+				String category = textAnalizer.getCategory(contentSourceImg);
+				if(category.equals("Senza categoria"))
+					countCat++;
 
 				time = System.currentTimeMillis();
-
 				// CREATING THE IMAGE OBJECT
 				Img img = new Img(keyword, urlImg, urlSourceImg, titleSourceImg, contentSourceImg);
 				imgsOfKeyword.add(img);
 
-//				if(countCat == 50){
-//					throw new RuntimeException("*** Error for banned! ***");
-//				}
+				if(countCat == 50){
+					throw new RuntimeException("*** Error for banned! ***");
+				}
+			}else{
+				System.out.println("Scartato un doppione: "+urlImg);
+				countDiscarded++;
 			}
 		}
+		return countDiscarded;
 	}
 
-	private boolean containsURLFromDocs(HashSet<Doc> docsOfKeyword, String url){
+	private boolean containsURLFromDocs(ArrayList<Doc> docsOfKeyword, String url){
 		for(Doc doc: docsOfKeyword)
 			if(doc.getUrl().equals(url))
 				return true;
 		return false;
 	}
 
-	private boolean containsURLFromImgs(HashSet<Img> imgsOfKeyword, String url){
+	private boolean containsURLFromImgs(ArrayList<Img> imgsOfKeyword, String url){
 		for(Img img: imgsOfKeyword)
-			if(img.getUrlSource().equals(url))
+			if(img.getUrlImg().equals(url))
 				return true;
 		return false;
 	}
