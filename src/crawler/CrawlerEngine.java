@@ -254,7 +254,6 @@ public class CrawlerEngine {
 					throw new RuntimeException("*** Error for banned! ***");
 				}
 			}else{
-				System.out.println("Scartato un doppione: "+urlImg);
 				countDiscarded++;
 			}
 		}
