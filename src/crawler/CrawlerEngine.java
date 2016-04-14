@@ -44,7 +44,6 @@ public class CrawlerEngine {
 
 	public final int skipMaxDoc;
 	public final int skipMaxImg;
-	//public final int queryMaxForAccount = 4900;
 
 	public CrawlerEngine(String accountKey, String textAnalizerKey, String inputPath, int skipMaxDoc, int skipMaxImg){
 		this.accountKey = accountKey;
@@ -158,44 +157,49 @@ public class CrawlerEngine {
 			JSONObject aResultDoc = resultsDoc.getJSONObject(i);
 
 			String urlDoc = (String)aResultDoc.get("Url");
-			String titleDoc = (String)aResultDoc.get("Title");
-			String descriptionDoc = (String)aResultDoc.get("Description");
-
-			// SEARCH CONTENT HTML, INDEX CONTENT AND CATEGORY FOR EACH DOCUMENT
-			String contentHTMLDoc = contentsCrawler.searchHTML(urlDoc);
-			String contentIndexDoc = contentsCrawler.searchIndex(urlDoc);
-
-			// TIMEOUT FOR CATEGORY API (2 QUERY AT SECOND MAX)
-			while((System.currentTimeMillis()-time)<500){
-				Thread.sleep(101);
-			}
 			
-			String category = textAnalizer.getCategory(contentIndexDoc);
-			if(category.equals("Senza categoria"))
-				countCat++;
-			
-			time = System.currentTimeMillis();
+			// CHECK IF THE URL IS JUST TAKE
+			if(!this.containsURLFromDocs(docsOfKeyword, urlDoc)){
+				String titleDoc = (String)aResultDoc.get("Title");
+				String descriptionDoc = (String)aResultDoc.get("Description");
 
-			if(contentHTMLDoc != ""){
-				// MANAGE ONLY THE DOCUMENT WITH CONTENTHTML
-				// CREATING THE DOCUMENT OBJECT
-				Doc doc = new Doc(keyword, urlDoc, titleDoc, descriptionDoc, contentHTMLDoc, contentIndexDoc, category);
-				docsOfKeyword.add(doc);
-			}else{
-				countDiscarded++;
-			}
-			
-			if(countCat == 75){
-				throw new RuntimeException("*** Error for banned! ***");
+				// SEARCH CONTENT HTML, INDEX CONTENT AND CATEGORY FOR EACH DOCUMENT
+				String contentHTMLDoc = contentsCrawler.searchHTML(urlDoc);
+				String contentIndexDoc = contentsCrawler.searchIndex(urlDoc);
+
+				// TIMEOUT FOR CATEGORY API (2 QUERY AT SECOND MAX)
+				while((System.currentTimeMillis()-time)<500){
+					Thread.sleep(101);
+				}
+
+				String category = textAnalizer.getCategory(contentIndexDoc);
+				if(category.equals("Senza categoria"))
+					countCat++;
+
+				time = System.currentTimeMillis();
+
+				if(contentHTMLDoc != ""){
+					// MANAGE ONLY THE DOCUMENT WITH CONTENTHTML
+					// CREATING THE DOCUMENT OBJECT
+					Doc doc = new Doc(keyword, urlDoc, titleDoc, descriptionDoc, contentHTMLDoc, contentIndexDoc, category);
+
+					docsOfKeyword.add(doc);
+				}else{
+					countDiscarded++;
+				}
+
+				if(countCat == 75){
+					throw new RuntimeException("*** Error for banned! ***");
+				}
 			}
 		}
-		
+
 		return countDiscarded;
 	}
 
 	// THIS METHOD MAKE THE CRAWLING OF THE IMAGE ABOUT ONE KEYWORD
 	private void crawlImage(HashSet<Img> imgsOfKeyword, String keyword, String keywordEncode, String marketEncode, int skip, String accountKeyEnc) throws IOException, JSONException, InterruptedException{
-		int countCat = 0;
+//		int countCat = 0;
 		long time = System.currentTimeMillis();
 		String queryBingUrlImg = String.format(bingUrlPatternImg, keywordEncode, marketEncode, skip);
 
@@ -222,35 +226,47 @@ public class CrawlerEngine {
 			JSONObject aResultImg = resultsImg.getJSONObject(i);
 
 			String urlImg = (String)aResultImg.get("MediaUrl");
-			String urlSourceImg = (String)aResultImg.get("SourceUrl");
-			String titleSourceImg = (String)aResultImg.get("Title");
-
-			// SEARCH CONTENT HTML OF THE SOURCE PAGE FOR EACH IMAGE
-			String contentSourceImg = contentsCrawler.searchIndex(urlSourceImg);
-
-			// TIMEOUT FOR CATEGORY API (2 QUERY AT SECOND MAX)
-			while((System.currentTimeMillis()-time)<500){
-				Thread.sleep(101);
-			}
-			String category = textAnalizer.getCategory(contentSourceImg);
-			if(category.equals("Senza categoria"))
-				countCat++;
 			
-			time = System.currentTimeMillis();
+			// CHECK IF THE URL IS JUST TAKE
+			if(!this.containsURLFromImgs(imgsOfKeyword, urlImg)){
+				String urlSourceImg = (String)aResultImg.get("SourceUrl");
+				String titleSourceImg = (String)aResultImg.get("Title");
 
-			// CREATING THE IMAGE OBJECT
-			Img img = new Img(keyword, urlImg, urlSourceImg, titleSourceImg, contentSourceImg, category);
-			imgsOfKeyword.add(img);
-			
-			if(countCat == 75){
-				throw new RuntimeException("*** Error for banned! ***");
+				// SEARCH CONTENT HTML OF THE SOURCE PAGE FOR EACH IMAGE
+				String contentSourceImg = contentsCrawler.searchIndex(urlSourceImg);
+
+				// TIMEOUT FOR CATEGORY API (2 QUERY AT SECOND MAX)
+				while((System.currentTimeMillis()-time)<500){
+					Thread.sleep(101);
+				}
+//				String category = textAnalizer.getCategory(contentSourceImg);
+//				if(category.equals("Senza categoria"))
+//					countCat++;
+
+				time = System.currentTimeMillis();
+
+				// CREATING THE IMAGE OBJECT
+				Img img = new Img(keyword, urlImg, urlSourceImg, titleSourceImg, contentSourceImg);
+				imgsOfKeyword.add(img);
+
+//				if(countCat == 50){
+//					throw new RuntimeException("*** Error for banned! ***");
+//				}
 			}
 		}
 	}
+
+	private boolean containsURLFromDocs(HashSet<Doc> docsOfKeyword, String url){
+		for(Doc doc: docsOfKeyword)
+			if(doc.getUrl().equals(url))
+				return true;
+		return false;
+	}
+
+	private boolean containsURLFromImgs(HashSet<Img> imgsOfKeyword, String url){
+		for(Img img: imgsOfKeyword)
+			if(img.getUrlSource().equals(url))
+				return true;
+		return false;
+	}
 }
-
-
-
-
-
-

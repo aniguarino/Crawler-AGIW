@@ -51,8 +51,7 @@ public class MongoMethods {
 					.append("URLImg", img.getUrlImg().toString())
 					.append("URLSource", img.getUrlSource().toString())
 					.append("TitleSource", img.getTitleSource().toString())
-					.append("ContentSource", img.getContentSource().toString())
-					.append("Category", img.getCategory().toString());
+					.append("ContentSource", img.getContentSource().toString());
 			collection_img.insertOne(image);
 			return true;
 		}
@@ -129,7 +128,7 @@ public class MongoMethods {
 			Document myImg = collection_img.find(eq("URL_Img", urlImg)).first();
 			Img img = new Img(myImg.getString("Keyword"),myImg.getString("URLImg"),
 					myImg.getString("URLSource"),myImg.getString("TitleSource"),
-					myImg.getString("ContentSource"),myImg.getString("Category"));
+					myImg.getString("ContentSource"));
 			return img;
 		}	
 		catch(Exception exc) {
@@ -143,7 +142,7 @@ public class MongoMethods {
 			Document myImg = collection_img.find(eq("URL_Sorgente", urlSource)).first();
 			Img img = new Img(myImg.getString("Keyword"),myImg.getString("URLImg"),
 					myImg.getString("URLSource"),myImg.getString("TitleSource"),
-					myImg.getString("ContentSource"),myImg.getString("Category"));
+					myImg.getString("ContentSource"));
 			return img;
 		}	
 		catch(Exception exc) {
@@ -160,7 +159,7 @@ public class MongoMethods {
 			Document myImg = collection_img.find(query).first();
 			Img img = new Img(myImg.getString("Keyword"),myImg.getString("URLImg"),
 					myImg.getString("URLSource"),myImg.getString("TitleSource"),
-					myImg.getString("ContentSource"),myImg.getString("Category"));
+					myImg.getString("ContentSource"));
 			return img;
 		}	
 		catch(Exception exc) {
