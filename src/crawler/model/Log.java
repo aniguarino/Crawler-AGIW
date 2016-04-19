@@ -10,7 +10,7 @@ public class Log {
 	private int trueMaxPersistImg;
 	private String timestamp;
 	
-	public Log(String keyword, int truePersistDoc, int trueMaxPersistDoc, int discardedDoc, int discardedImg, int truePersistImg, int trueMaxPersistImg, String timestamp) {
+	public Log(String keyword, int truePersistDoc, int trueMaxPersistDoc, int discardedDoc,  int truePersistImg, int trueMaxPersistImg, int discardedImg,  String timestamp) {
 		this.keyword = keyword;
 		this.truePersistDoc = truePersistDoc;
 		this.trueMaxPersistDoc = trueMaxPersistDoc;

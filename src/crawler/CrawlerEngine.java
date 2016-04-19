@@ -110,7 +110,7 @@ public class CrawlerEngine {
 				converter.setTimeZone(TimeZone.getTimeZone("Europe/Rome"));
 
 				Log log = new Log(keyword, (docsOfKeyword.size()-countErrorPersistDoc), docsOfKeyword.size(), countDiscardedDoc,
-						(imgsOfKeyword.size()-countErrorPersistImg), countDiscardedImg, imgsOfKeyword.size(), converter.format(localTime));
+						(imgsOfKeyword.size()-countErrorPersistImg), imgsOfKeyword.size(), countDiscardedImg, converter.format(localTime));
 
 				System.out.println("Persistiti "+log.getTruePersistDoc()+" documenti su "+log.getTrueMaxPersistDoc()+" documenti totali da salvare, per la keyword: "+keyword+"; documenti scartarti: "+log.getDiscardedDoc());
 				System.out.println("Persistite "+log.getTruePersistImg()+" immagini su "+log.getTrueMaxPersistImg()+" immagini totali da salvare, per la keyword: "+keyword+"; immagini scartarte: "+log.getDiscardedImg());
@@ -240,7 +240,7 @@ public class CrawlerEngine {
 				while((System.currentTimeMillis()-time)<500){
 					Thread.sleep(101);
 				}
-				String category = textAnalizer.getCategory(contentSourceImg);
+				String category = ""; // textAnalizer.getCategory(contentSourceImg);
 				if(category.equals("Senza categoria"))
 					countCat++;
 
