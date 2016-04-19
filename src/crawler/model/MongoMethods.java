@@ -14,9 +14,11 @@ public class MongoMethods {
 	MongoDatabase database;
 	MongoCollection<Document> collection_doc;
 	MongoCollection<Document> collection_img;
+	String ipDb;
 
-	public MongoMethods() {
-		this.connection = new MongoConnection();
+	public MongoMethods(String ipDb) {
+		this.ipDb = ipDb;
+		this.connection = new MongoConnection(ipDb);
 		this.mongoClient = MongoConnection.getMongoClient();
 		this.database = mongoClient.getDatabase("mydb");
 		this.collection_doc = database.getCollection("documenti");

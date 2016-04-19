@@ -14,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.TimeZone;
 
 import org.json.JSONArray;
@@ -35,7 +34,7 @@ public class CrawlerEngine {
 	private String market = "it-IT";
 	private FileManager fileManager = new FileManager();
 	private ArrayList<String> names = null;
-	private MongoMethods mongo = new MongoMethods();
+	private MongoMethods mongo = null;
 	private ContentsDoc contentsCrawler = new ContentsDoc();
 	private TextAnalizer textAnalizer = new TextAnalizer();
 
@@ -44,7 +43,8 @@ public class CrawlerEngine {
 	public final int skipMaxDoc;
 	public final int skipMaxImg;
 
-	public CrawlerEngine(String accountKey, String textAnalizerKey, String inputPath, int skipMaxDoc, int skipMaxImg){
+	public CrawlerEngine(String ipDb, String accountKey, String textAnalizerKey, String inputPath, int skipMaxDoc, int skipMaxImg){
+		this.mongo = new MongoMethods(ipDb);
 		this.accountKey = accountKey;
 		this.textAnalizer.setKey(textAnalizerKey);
 		this.names = fileManager.readStringFromPath(inputPath);

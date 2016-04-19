@@ -14,10 +14,11 @@ public class Crawler {
     	
     	final String pathInput = "persone.txt";
     	
-    	final int skipDoc = Integer.parseInt(args[0]);
-    	final int skipImg = Integer.parseInt(args[1]);
+    	final String ipDb = args[0];
+    	final int skipDoc = Integer.parseInt(args[1]);
+    	final int skipImg = Integer.parseInt(args[2]);
     	
-		CrawlerEngine crawlerEngine = new CrawlerEngine(accountKey, textAnalizerKey, pathInput, skipDoc, skipImg);
+		CrawlerEngine crawlerEngine = new CrawlerEngine(ipDb, accountKey, textAnalizerKey, pathInput, skipDoc, skipImg);
 		
 		crawlerEngine.run();
     }
