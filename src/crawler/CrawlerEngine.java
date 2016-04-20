@@ -174,7 +174,7 @@ public class CrawlerEngine {
 						Thread.sleep(101);
 					}
 	
-					String category = "";//textAnalizer.getCategory(contentIndexDoc);
+					String category = textAnalizer.getCategory(contentIndexDoc);
 					if(category.equals("Senza categoria"))
 						countCat++;
 					time = System.currentTimeMillis();
@@ -199,7 +199,6 @@ public class CrawlerEngine {
 
 	// THIS METHOD MAKE THE CRAWLING OF THE IMAGE ABOUT ONE KEYWORD
 	private int crawlImage(ArrayList<Img> imgsOfKeyword, String keyword, String keywordEncode, String marketEncode, int skip, String accountKeyEnc) throws IOException, JSONException, InterruptedException{
-		int countCat = 0;
 		long time = System.currentTimeMillis();
 		int countDiscarded = 0;
 		String queryBingUrlImg = String.format(bingUrlPatternImg, keywordEncode, marketEncode, skip);
@@ -240,18 +239,11 @@ public class CrawlerEngine {
 				while((System.currentTimeMillis()-time)<500){
 					Thread.sleep(101);
 				}
-				String category = ""; // textAnalizer.getCategory(contentSourceImg);
-				if(category.equals("Senza categoria"))
-					countCat++;
 
 				time = System.currentTimeMillis();
 				// CREATING THE IMAGE OBJECT
 				Img img = new Img(keyword, urlImg, urlSourceImg, titleSourceImg, contentSourceImg);
 				imgsOfKeyword.add(img);
-
-				if(countCat == 50){
-					throw new RuntimeException("*** Error for banned! ***");
-				}
 			}else{
 				countDiscarded++;
 			}

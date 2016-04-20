@@ -39,8 +39,7 @@ public class MongoMethods {
 			return true;
 		}
 		catch (Exception exc) {
-			System.out.println(exc);
-			System.out.println("Il documento con keyword "+ document.getKeyword() +" non e' stato persistito!");
+			System.out.println("Il documento con keyword "+ document.getKeyword() +" e con URL "+ document.getUrl() +" non e' stato persistito!");
 			return false;
 		}
 	}
@@ -58,8 +57,7 @@ public class MongoMethods {
 			return true;
 		}
 		catch (Exception exc) {
-			System.out.println(exc);
-			System.out.println("L'immagine con keyword "+ img.getKeyword() +" non e' stata persistita!");
+			System.out.println("L'immagine con keyword "+ img.getKeyword() +" e con URLImg "+ img.getUrlImg() +" non e' stata persistita!");
 			return false;
 		}
 	}
